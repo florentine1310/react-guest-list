@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 export default function App() {
   const baseUrl = 'http://localhost:4000';
+  const [isLoading, setIsLoading] = useState(true);
 
   // Variable for new guest input
   const [newGuest, setNewGuest] = useState({
@@ -22,6 +23,7 @@ export default function App() {
       const allGuests = await response.json();
       console.log(allGuests);
       setGuestList([...allGuests]);
+      setIsLoading(false);
     }
     fetchGuestList().catch((error) => {
       console.error('Error when executing GetGuestList:', error);
@@ -132,75 +134,91 @@ export default function App() {
   return (
     <div title={`data-test-id="guest"`}>
       <h1> My Guest List</h1>
-      <label>
-        First Name:
-        <input
-          name="firstName"
-          placeholder="Your First Name"
-          value={newGuest.firstName}
-          onChange={handleFirstNameChange}
-        />
-      </label>
-      <label>
-        Last Name:
-        <input
-          name="lastName"
-          placeholder="Your Last Name"
-          value={newGuest.lastName}
-          onChange={handleLastNameChange}
-          onKeyDown={handleKeyDown}
-        />
-      </label>
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>is Attending</th>
-            <th> </th>
-          </tr>
-        </thead>
-        <tbody>
-          {guestList.map((guest) => {
-            // Handle remove guest function
-            async function handleRemoveGuest() {
-              const response = await fetch(`${baseUrl}/guests/${guest.id}`, {
-                method: 'DELETE',
-              });
-              const deletedGuest = await response.json();
-              setGuestList(
-                guestList.filter(
-                  (remainingGuest) => remainingGuest.id !== deletedGuest.id,
-                ),
-              );
-              console.log('Guest successfully deleted:', deletedGuest);
-            }
-
-            return (
-              <tr key={`user-${guest.id}`}>
-                <td>{guest.firstName}</td>
-                <td>{guest.lastName}</td>
-                <td>
-                  <input
-                    name="isAttending"
-                    type="checkbox"
-                    aria-label="isAttending"
-                    checked={guest.attending}
-                    onChange={async (event) =>
-                      event.currentTarget.checked
-                        ? await enableAttending(guest)
-                        : await disableAttending(guest)
-                    }
-                  />
-                </td>
-                <td>
-                  <button onClick={handleRemoveGuest}>Remove</button>
-                </td>
+      <form>
+        <label>
+          First Name:
+          <input
+            className="textField"
+            name="firstName"
+            placeholder="Your First Name"
+            disabled={isLoading}
+            value={newGuest.firstName}
+            onChange={handleFirstNameChange}
+          />
+        </label>
+        <label>
+          Last Name:
+          <input
+            className="textField"
+            name="lastName"
+            placeholder="Your Last Name"
+            disabled={isLoading}
+            value={newGuest.lastName}
+            onChange={handleLastNameChange}
+            onKeyDown={handleKeyDown}
+          />
+        </label>
+      </form>
+      {isLoading ? (
+        <div> Loading...</div>
+      ) : (
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Is Attending</th>
+                <th> </th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {guestList.map((guest) => {
+                // Handle remove guest function
+                async function handleRemoveGuest() {
+                  const response = await fetch(
+                    `${baseUrl}/guests/${guest.id}`,
+                    {
+                      method: 'DELETE',
+                    },
+                  );
+                  const deletedGuest = await response.json();
+                  setGuestList(
+                    guestList.filter(
+                      (remainingGuest) => remainingGuest.id !== deletedGuest.id,
+                    ),
+                  );
+                  console.log('Guest successfully deleted:', deletedGuest);
+                }
+
+                return (
+                  <tr key={`user-${guest.id}`}>
+                    <td>{guest.firstName}</td>
+                    <td>{guest.lastName}</td>
+                    <td>
+                      <input
+                        name="isAttending"
+                        type="checkbox"
+                        aria-label="isAttending"
+                        checked={guest.attending}
+                        onChange={async (event) =>
+                          event.currentTarget.checked
+                            ? await enableAttending(guest)
+                            : await disableAttending(guest)
+                        }
+                      />
+                    </td>
+                    <td>
+                      <button onClick={handleRemoveGuest}>Remove</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <button>Clear All</button>
+        </div>
+      )}
     </div>
   );
 }
