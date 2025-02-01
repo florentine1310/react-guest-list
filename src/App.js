@@ -1,16 +1,12 @@
 import './App.css';
 import { useEffect, useState } from 'react';
-import {
-  disableAttending,
-  enableAttending,
-} from './components/ChangeAttendingStatus';
-import CreateGuest from './components/CreateGuest';
 
 export default function App() {
   const baseUrl = 'http://localhost:4000';
 
   // Variable for new guest input
   const [newGuest, setNewGuest] = useState({
+    id: ' ',
     firstName: ' ',
     lastName: ' ',
     isAttending: false,
@@ -48,17 +44,89 @@ export default function App() {
     });
   }
 
-  // Handle change only after pressing Enter key
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      CreateGuest(newGuest);
-      setNewGuest({
-        ...newGuest,
-        firstName: ' ',
-        lastName: ' ',
+  // Handle new guest creation
+
+  function CreateGuest(props) {
+    const firstName = props.firstName;
+    const lastName = props.lastName;
+    async function createGuest() {
+      const response = await fetch(`${baseUrl}/guests`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ firstName, lastName }),
       });
+      const createdGuest = await response.json();
+      setGuestList([...guestList, createdGuest]);
+      console.log('Guest successfully created:', createdGuest);
+    }
+    createGuest().catch((error) => {
+      console.log('Error when trying to create a guest:', error);
+    });
+  }
+
+  // Handle change only after pressing Enter key
+  const handleKeyDown = async (event) => {
+    try {
+      if (event.key === 'Enter') {
+        await CreateGuest(newGuest);
+        setNewGuest({
+          ...newGuest,
+          firstName: ' ',
+          lastName: ' ',
+        });
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  // Handle setting "attending" to true
+  async function enableAttending(props) {
+    try {
+      const response = await fetch(`${baseUrl}/guests/${props.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ attending: true }),
+      });
+      const updatedGuest = await response.json();
+      setGuestList((prevGuestList) =>
+        prevGuestList.map((g) => (g.id === updatedGuest.id ? updatedGuest : g)),
+      );
+      console.log(
+        'successfully updated status to "is attending"',
+        updatedGuest,
+      );
+    } catch (error) {
+      console.log('Error when updating attending status:', error);
+    }
+  }
+
+  // Handle setting "attending" to false
+  async function disableAttending(props) {
+    try {
+      const response = await fetch(`${baseUrl}/guests/${props.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ attending: false }),
+      });
+      const updatedGuest = await response.json();
+      setGuestList((prevGuestList) =>
+        prevGuestList.map((g) => (g.id === updatedGuest.id ? updatedGuest : g)),
+      );
+      console.log(
+        'successfully updated status to "not attending"',
+        updatedGuest,
+      );
+    } catch (error) {
+      console.log('Error when updating attending status:', error);
+    }
+  }
 
   // Display Guest List
   return (
@@ -100,6 +168,11 @@ export default function App() {
                 method: 'DELETE',
               });
               const deletedGuest = await response.json();
+              setGuestList(
+                guestList.filter(
+                  (remainingGuest) => remainingGuest.id !== deletedGuest.id,
+                ),
+              );
               console.log('Guest successfully deleted:', deletedGuest);
             }
 
