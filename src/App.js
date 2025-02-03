@@ -19,7 +19,6 @@ export default function App() {
 
   // Fetching the full guest list on first render
   useEffect(() => {
-    setIsLoading(true);
     async function fetchGuestList() {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
@@ -27,11 +26,11 @@ export default function App() {
 
       setGuestList([...allGuests]);
       setFallbackGuestList([...allGuests]);
+      setIsLoading(false);
     }
     fetchGuestList().catch((error) => {
       console.error('Error when executing GetGuestList:', error);
     });
-    setIsLoading(false);
   }, []);
 
   // Handle input field for first name
