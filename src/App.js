@@ -15,6 +15,7 @@ export default function App() {
 
   // Variable for fetched guest list data
   const [guestList, setGuestList] = useState([]);
+  const [fallbackGuestList, setFallbackGuestList] = useState([]);
 
   // Fetching the full guest list on first render
   useEffect(() => {
@@ -23,6 +24,7 @@ export default function App() {
       const allGuests = await response.json();
       console.log(allGuests);
       setGuestList([...allGuests]);
+      setFallbackGuestList([...allGuests]);
       setIsLoading(false);
     }
     fetchGuestList().catch((error) => {
@@ -130,13 +132,50 @@ export default function App() {
     }
   }
 
+  // Handle clear all button
+  async function handleRemoveAll() {
+    try {
+      // Step 1: Fetch the current list of guests
+      const response = await fetch(`${baseUrl}/guests`);
+      const allGuests = await response.json();
+
+      // Step 2: Loop through each guest and send a DELETE request
+      await Promise.all(
+        allGuests.map((guest) =>
+          fetch(`${baseUrl}/guests/${guest.id}`, { method: 'DELETE' }),
+        ),
+      );
+
+      console.log('All guests deleted successfully');
+      setGuestList([]);
+    } catch (error) {
+      console.error('Error deleting all guests:', error);
+    }
+  }
+
+  // Filter handlers
+
+  function onlyAttendingFilter() {
+    const filteredList = fallbackGuestList.filter((g) => g.attending === true);
+    setGuestList(filteredList);
+  }
+
+  function onlyNonAttendingFilter() {
+    const filteredList = fallbackGuestList.filter((g) => g.attending !== true);
+    setGuestList(filteredList);
+  }
+
+  function resetFilter() {
+    setGuestList(fallbackGuestList);
+  }
+
   // Display Guest List
   return (
     <div title={`data-test-id="guest"`}>
       <h1> My Guest List</h1>
       <form>
         <label>
-          First Name:
+          First Name
           <input
             className="textField"
             name="firstName"
@@ -147,7 +186,7 @@ export default function App() {
           />
         </label>
         <label>
-          Last Name:
+          Last Name
           <input
             className="textField"
             name="lastName"
@@ -163,6 +202,19 @@ export default function App() {
         <div> Loading...</div>
       ) : (
         <div>
+          <ul>
+            <li className="filterButton">
+              <button onClick={onlyNonAttendingFilter}>
+                Only Non-Attending
+              </button>
+            </li>
+            <li className="filterButton">
+              <button onClick={onlyAttendingFilter}>Only Attending</button>
+            </li>
+            <li className="filterButton">
+              <button onClick={resetFilter}>Reset Filter</button>
+            </li>
+          </ul>
           <table>
             <thead>
               <tr>
@@ -216,7 +268,9 @@ export default function App() {
               })}
             </tbody>
           </table>
-          <button>Clear All</button>
+          <button className="clearAll" onClick={handleRemoveAll}>
+            Clear All
+          </button>
         </div>
       )}
     </div>
