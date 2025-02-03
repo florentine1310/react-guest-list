@@ -27,11 +27,11 @@ export default function App() {
 
       setGuestList([...allGuests]);
       setFallbackGuestList([...allGuests]);
-      setIsLoading(true);
     }
     fetchGuestList().catch((error) => {
       console.error('Error when executing GetGuestList:', error);
     });
+    setIsLoading(false);
   }, []);
 
   // Handle input field for first name
