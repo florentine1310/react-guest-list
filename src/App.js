@@ -181,7 +181,6 @@ export default function App() {
               className="textField"
               name="firstName"
               placeholder="Your First Name"
-              disabled={isLoading}
               value={newGuest.firstName}
               onChange={handleFirstNameChange}
             />
@@ -192,7 +191,6 @@ export default function App() {
               className="textField"
               name="lastName"
               placeholder="Your Last Name"
-              disabled={isLoading}
               value={newGuest.lastName}
               onChange={handleLastNameChange}
               onKeyDown={handleKeyDown}
