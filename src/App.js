@@ -19,7 +19,7 @@ export default function App() {
 
   // Fetching the full guest list on first render
   useEffect(() => {
-    setIsLoading(false);
+    setIsLoading(true);
     async function fetchGuestList() {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
@@ -27,6 +27,7 @@ export default function App() {
 
       setGuestList([...allGuests]);
       setFallbackGuestList([...allGuests]);
+      setIsLoading(true);
     }
     fetchGuestList().catch((error) => {
       console.error('Error when executing GetGuestList:', error);
