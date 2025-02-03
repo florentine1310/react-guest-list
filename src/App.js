@@ -180,7 +180,7 @@ export default function App() {
           <div>
             <form>
               <label>
-                First Name
+                First name
                 <input
                   className="textField"
                   name="firstName"
@@ -191,7 +191,7 @@ export default function App() {
                 />
               </label>
               <label>
-                Last Name
+                Last name
                 <input
                   className="textField"
                   name="lastName"
