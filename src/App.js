@@ -23,9 +23,9 @@ export default function App() {
       const response = await fetch(`${baseUrl}/guests`);
       const allGuests = await response.json();
       console.log(allGuests);
+      setIsLoading(false);
       setGuestList([...allGuests]);
       setFallbackGuestList([...allGuests]);
-      setIsLoading(false);
     }
     fetchGuestList().catch((error) => {
       console.error('Error when executing GetGuestList:', error);
@@ -181,6 +181,7 @@ export default function App() {
               className="textField"
               name="firstName"
               placeholder="Your First Name"
+              disabled={isLoading}
               value={newGuest.firstName}
               onChange={handleFirstNameChange}
             />
@@ -191,6 +192,7 @@ export default function App() {
               className="textField"
               name="lastName"
               placeholder="Your Last Name"
+              disabled={isLoading}
               value={newGuest.lastName}
               onChange={handleLastNameChange}
               onKeyDown={handleKeyDown}
