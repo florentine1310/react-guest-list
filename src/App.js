@@ -19,19 +19,21 @@ export default function App() {
 
   // Fetching the full guest list on first render
   useEffect(() => {
-    async function fetchGuestList() {
-      const response = await fetch(`${baseUrl}/guests`);
-      const allGuests = await response.json();
-      console.log(allGuests);
+    if (isLoading) {
+      async function fetchGuestList() {
+        const response = await fetch(`${baseUrl}/guests`);
+        const allGuests = await response.json();
+        console.log(allGuests);
 
-      setGuestList([...allGuests]);
-      setFallbackGuestList([...allGuests]);
-      setIsLoading(false);
+        setGuestList([...allGuests]);
+        setFallbackGuestList([...allGuests]);
+        setIsLoading(false);
+      }
+      fetchGuestList().catch((error) => {
+        console.error('Error when executing GetGuestList:', error);
+      });
     }
-    fetchGuestList().catch((error) => {
-      console.error('Error when executing GetGuestList:', error);
-    });
-  }, []);
+  }, [isLoading]);
 
   // Handle input field for first name
   function handleFirstNameChange(event) {
