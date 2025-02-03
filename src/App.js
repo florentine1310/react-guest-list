@@ -174,35 +174,35 @@ export default function App() {
     <div data-test-id="guest">
       <h1> My Guest List</h1>
       <div>
+        <form>
+          <label>
+            First name
+            <input
+              className="textField"
+              name="firstName"
+              placeholder="Your First Name"
+              disabled={isLoading}
+              value={newGuest.firstName}
+              onChange={handleFirstNameChange}
+            />
+          </label>
+          <label>
+            Last name
+            <input
+              className="textField"
+              name="lastName"
+              placeholder="Your Last Name"
+              disabled={isLoading}
+              value={newGuest.lastName}
+              onChange={handleLastNameChange}
+              onKeyDown={handleKeyDown}
+            />
+          </label>
+        </form>
         {isLoading ? (
           <div> Loading...</div>
         ) : (
           <div>
-            <form>
-              <label>
-                First name
-                <input
-                  className="textField"
-                  name="firstName"
-                  placeholder="Your First Name"
-                  disabled={isLoading}
-                  value={newGuest.firstName}
-                  onChange={handleFirstNameChange}
-                />
-              </label>
-              <label>
-                Last name
-                <input
-                  className="textField"
-                  name="lastName"
-                  placeholder="Your Last Name"
-                  disabled={isLoading}
-                  value={newGuest.lastName}
-                  onChange={handleLastNameChange}
-                  onKeyDown={handleKeyDown}
-                />
-              </label>
-            </form>
             <ul>
               <li className="filterButton">
                 <button onClick={onlyNonAttendingFilter}>
