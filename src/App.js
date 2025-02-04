@@ -2,7 +2,7 @@ import './App.css';
 import { useEffect, useState } from 'react';
 
 export default function App() {
-  const baseUrl = 'http://localhost:4000';
+  const baseUrl = 'https://9rbjs-4000.csb.app';
   const [isLoading, setIsLoading] = useState(true);
 
   // Variable for new guest input
