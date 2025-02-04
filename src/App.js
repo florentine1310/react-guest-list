@@ -174,7 +174,7 @@ export default function App() {
 
   // Display Guest List
   return (
-    <div data-test-id="guest">
+    <div>
       <h1> My Guest List</h1>
       <div>
         <form>
@@ -249,7 +249,7 @@ export default function App() {
                   }
 
                   return (
-                    <tr key={`user-${guest.id}`}>
+                    <tr data-test-id="guest" key={`user-${guest.id}`}>
                       <td>{guest.firstName}</td>
                       <td>{guest.lastName}</td>
                       <td>
