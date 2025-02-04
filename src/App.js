@@ -66,16 +66,15 @@ export default function App() {
       });
       const createdGuest = await response.json();
       setGuestList([...guestList, createdGuest]);
-
+      setNewGuest({
+        ...newGuest,
+        firstName: '',
+        lastName: '',
+      });
       console.log('Guest successfully created:', createdGuest);
     }
     createGuest().catch((error) => {
       console.log('Error when trying to create a guest:', error);
-    });
-    setNewGuest({
-      ...newGuest,
-      firstName: ' ',
-      lastName: ' ',
     });
   }
 
