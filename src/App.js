@@ -256,7 +256,7 @@ export default function App() {
                         <input
                           name="isAttending"
                           type="checkbox"
-                          aria-label="isAttending"
+                          aria-label="attending"
                           checked={guest.attending}
                           onChange={async (event) =>
                             event.currentTarget.checked
